@@ -1,0 +1,114 @@
+.fieldsContainer {
+    direction: rtl;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    width: 18%;
+    margin-bottom: 10px;
+    min-width: 220px;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    label {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    input {
+        height: 36px;
+        padding: 5px 10px;
+        font-size: 14px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        transition: border-color 0.3s;
+
+        &:focus {
+            border-color: #40a9ff;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+        }
+    }
+}
+
+.imagesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.imageField {
+    text-align: center;
+    flex: 1 1 calc(50% - 20px); // Two images per row
+    min-width: 200px;
+
+    h4 {
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    p {
+        font-size: 14px;
+        color: #888;
+    }
+
+    .image {
+        max-width: 100%;
+        max-height: 200px;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        object-fit: contain;
+    }
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+
+    button {
+        min-width: 100px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .ant-btn-primary {
+        background-color: #4682b4;
+        border-color: #4682b4;
+
+        &:hover {
+            background-color: #356a8e;
+            border-color: #356a8e;
+        }
+    }
+
+    .ant-btn-default {
+        color: #333;
+
+        &:hover {
+            color: #000;
+            border-color: #bbb;
+        }
+    }
+}
