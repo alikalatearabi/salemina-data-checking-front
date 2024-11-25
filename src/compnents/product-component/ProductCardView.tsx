@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Modal, Input, Pagination, notification } from "antd";
-import { Product, updateProduct } from "../api/product";
-import { useData } from "../store/dataContext";
+import { Button, Card, Pagination, notification } from "antd";
+import { Product, updateProduct } from "../../api/product";
+import { useData } from "../../store/dataContext";
+import EditProductModal from "./EditProductModal";
 import styles from "./productCardViewStyle.module.scss";
 
 const { Meta } = Card;
@@ -104,40 +105,13 @@ const ProductCardView = () => {
                 />
             </div>
 
-            <Modal
-                title="Edit Product"
+            <EditProductModal
                 visible={isModalVisible}
+                product={selectedProduct}
                 onCancel={() => setIsModalVisible(false)}
-                footer={[
-                    <Button key="cancel" onClick={() => setIsModalVisible(false)}>
-                        Cancel
-                    </Button>,
-                    <Button key="save" type="primary" onClick={handleSave}>
-                        Save
-                    </Button>,
-                ]}
-            >
-                {selectedProduct && (
-                    <div>
-                        <label>Product Name:</label>
-                        <Input
-                            value={selectedProduct.product_name}
-                            onChange={(e) => handleChangeInput("product_name", e.target.value)}
-                        />
-                        <label>Brand:</label>
-                        <Input
-                            value={selectedProduct.brand}
-                            onChange={(e) => handleChangeInput("brand", e.target.value)}
-                        />
-                        <label>Cluster:</label>
-                        <Input
-                            value={selectedProduct.cluster}
-                            onChange={(e) => handleChangeInput("cluster", e.target.value)}
-                        />
-                        {/* Add more fields as needed */}
-                    </div>
-                )}
-            </Modal>
+                onSave={handleSave}
+                onChange={handleChangeInput}
+            />
         </div>
     );
 };

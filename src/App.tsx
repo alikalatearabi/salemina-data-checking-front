@@ -1,7 +1,7 @@
 import './App.css'
 import FilterList from './compnents/FilterList'
 import AppLayout from './compnents/Layout/Layout'
-import ProductCardView from './compnents/ProductCardView'
+import ProductCardView from './compnents/product-component/ProductCardView'
 
 function App() {
 
