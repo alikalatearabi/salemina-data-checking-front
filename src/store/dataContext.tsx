@@ -44,7 +44,7 @@ export interface DataType {
 interface DataContextType {
     data: DataType;
     setData: React.Dispatch<React.SetStateAction<DataType>>;
-    fetchData: (params: { page: string, limit: string }) => void;
+    fetchData: (params: { page: string; limit: string;[key: string]: any }) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -52,14 +52,15 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: ReactNode }) => {
     const [data, setData] = useState<DataType>({});
 
-    const fetchData = async (newParams: { page: string; limit: string }) => {
+    const fetchData = async (newParams: { page: string; limit: string;[key: string]: any }) => {
         try {
-            const response = await apiClient.get('/products', { params: newParams });
+            const response = await apiClient.get("/products", { params: newParams });
             setData(response.data);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error("Error fetching data:", error);
         }
     };
+
 
     return (
         <DataContext.Provider value={{ data, setData, fetchData }}>

@@ -26,7 +26,7 @@ const ProductCardView = () => {
     };
 
     const handleSave = async () => {
-        try {
+        try {            
             if (selectedProduct) {
                 await updateProduct(selectedProduct);
                 notification.success({
