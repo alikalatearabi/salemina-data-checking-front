@@ -11,7 +11,6 @@ const ProductCardView = () => {
     const { data, fetchData } = useData();
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(12);
-    const [editingProduct, setEditingProduct] = useState<string | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -20,7 +19,6 @@ const ProductCardView = () => {
     }, [currentPage]);
 
     const handleEdit = (product: Product) => {
-        setEditingProduct(product._id);
         setSelectedProduct(product);
         setIsModalVisible(true);
     };
@@ -42,7 +40,6 @@ const ProductCardView = () => {
             });
         }
         setIsModalVisible(false);
-        setEditingProduct(null);
     };
 
     const handleChangeInput = (key: string, value: string) => {

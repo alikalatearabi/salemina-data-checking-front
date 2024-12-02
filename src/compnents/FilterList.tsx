@@ -1,5 +1,4 @@
 import { Button, Popover, Input } from "antd";
-import PersianDatePicker from "./DatePicker";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { useData } from "../store/dataContext";
 import { useState } from "react";
@@ -30,7 +29,6 @@ const FilterList: React.FC = () => {
                 onChange={(e) => setImporter(e.target.value)}
                 style={inputStyle}
             />
-            {/* <PersianDatePicker /> */}
             <Button style={SearchButtonStyle} onClick={searchDataHandler}>
                 جست و جو
             </Button>
@@ -69,10 +67,6 @@ const helpIconStyle: React.CSSProperties = {
     left: "10px",
     fontFamily: "Vazir",
 };
-
-const filterFields: React.CSSProperties = {
-    display: 'flex',
-}
 
 const inputStyle: React.CSSProperties = {
     marginBottom: "10px",
