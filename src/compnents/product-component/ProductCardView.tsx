@@ -32,6 +32,7 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined> }>
 
     const handleSave = async () => {
         try {
+            
             if (selectedProduct) {
                 const product = {...selectedProduct, "monitor": username}
                 await updateProduct(product);

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment-jalaali";
-import { Modal, Input, Button } from "antd";
+import { Modal, Input, Button, Select } from "antd";
+import axios from "axios"; // Import axios for API calls
 import { Product } from "../../api/product";
 import styles from "./EditProductModal.module.scss";
 
@@ -41,6 +42,57 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 }) => {
     const [imageModalVisible, setImageModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [clusters, setClusters] = useState<string[]>([]);
+    const [childClusters, setChildClusters] = useState<string[]>([]);
+    const [selectedCluster, setSelectedCluster] = useState<string | null>(null);
+    const [selectedChildCluster, setSelectedChildCluster] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (visible) {
+            axios
+                .get("http://localhost:3000/api/distinct-clusters")
+                .then((response) => {
+                    if (response.data && Array.isArray(response.data.clusters)) {
+                        const filteredClusters = response.data.clusters.filter(
+                            (cluster: string) => cluster.trim() !== ""
+                        );
+                        setClusters(filteredClusters);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching clusters:", error);
+                });
+        }
+    }, [visible]);
+
+    // Fetch child clusters when a cluster is selected
+    useEffect(() => {
+        if (selectedCluster) {
+            axios
+                .get(`http://localhost:3000/api/distinct-child-clusters?cluster=${selectedCluster}`)
+                .then((response) => {
+                    if (response.data && Array.isArray(response.data.childClusters)) {
+                        setChildClusters(response.data.childClusters);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching child clusters:", error);
+                });
+        } else {
+            setChildClusters([]); // Reset child clusters if parent cluster is unselected
+        }
+    }, [selectedCluster]);
+
+    const handleClusterChange = (value: string) => {
+        setSelectedCluster(value);
+        setSelectedChildCluster(null);
+        onChange("cluster", value);
+    };
+
+    const handleChildClusterChange = (value: string) => {
+        setSelectedChildCluster(value);
+        onChange("child_cluster", value);
+    };
 
     const handleImageClick = (imageUrl: string) => {
         setSelectedImage(imageUrl);
@@ -55,7 +107,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     return (
         <>
             <Modal
-                width="90vw"
+                width="98vw"
                 title="Edit Product"
                 open={visible}
                 onCancel={onCancel}
@@ -73,21 +125,54 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
             >
                 {product && (
                     <div className={styles.container}>
-                        {/* Editable Fields */}
                         <div className={styles.fieldsContainer}>
                             {Object.keys(product)
                                 .filter((key) => !excludedFields.includes(key))
                                 .map((key) => (
                                     <div key={key} className={styles.field}>
                                         <label>{key.replace(/_/g, " ")}:</label>
-                                        <Input
-                                            value={(product as any)[key]}
-                                            onChange={(e) => onChange(key, e.target.value)}
-                                        />
+                                        {key === "cluster" ? (
+                                            <Select
+                                                value={selectedCluster || product[key] || undefined}
+                                                onChange={handleClusterChange}
+                                                style={{ width: "100%", direction: "rtl" }}
+                                                dropdownStyle={{ direction: "rtl" }}
+                                                placeholder="یک دسته‌بندی انتخاب کنید"
+                                                showSearch
+                                                filterOption={(input, option) => {
+                                                    return option ? option.label.toLowerCase().includes(input.toLowerCase()) : false;
+                                                }}
+                                                options={clusters.map((cluster) => ({
+                                                    value: cluster,
+                                                    label: cluster,
+                                                }))}
+                                            />
+                                        ) : key === "child_cluster" ? (
+                                            <Select
+                                                value={selectedChildCluster || product[key] || undefined}
+                                                onChange={handleChildClusterChange}
+                                                style={{ width: "100%", direction: "rtl" }}
+                                                dropdownStyle={{ direction: "rtl" }}
+                                                placeholder="یک زیر دسته‌بندی انتخاب کنید"
+                                                disabled={!selectedCluster} // Disable if no parent cluster is selected
+                                                showSearch
+                                                filterOption={(input, option) => {
+                                                    return option ? option.label.toLowerCase().includes(input.toLowerCase()) : false;
+                                                }}
+                                                options={childClusters.map((cluster) => ({
+                                                    value: cluster,
+                                                    label: cluster,
+                                                }))}
+                                            />
+                                        ) : (
+                                            <Input
+                                                value={(product as any)[key]}
+                                                onChange={(e) => onChange(key, e.target.value)}
+                                            />
+                                        )}
                                     </div>
                                 ))}
 
-                            {/* Read-only Jalali Dates */}
                             {product.createdAt && (
                                 <div className={styles.field}>
                                     <label>تاریخ ایجاد:</label>
@@ -108,19 +193,16 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                             )}
                         </div>
 
-                        {/* Product Images */}
                         <div className={styles.imagesContainer}>
                             {imageFields.map(({ key, label }) => (
                                 <div key={key} className={styles.imageField}>
                                     <h4>{label}</h4>
                                     {product[key as keyof Product] ? (
                                         <img
-                                            src={typeof product[key as keyof Product] === 'string' ? product[key as keyof Product] as string : undefined}
+                                            src={typeof product[key as keyof Product] === "string" ? product[key as keyof Product] as string : undefined}
                                             alt={label}
                                             className={styles.image}
-                                            onClick={() =>
-                                                handleImageClick(product[key as keyof Product] as string)
-                                            }
+                                            onClick={() => handleImageClick(product[key as keyof Product] as string)}
                                             onError={(e) => {
                                                 (e.target as HTMLImageElement).style.display = "none";
                                                 const container = (e.target as HTMLElement).closest("div");
@@ -136,28 +218,6 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                             ))}
                         </div>
                     </div>
-                )}
-            </Modal>
-
-            {/* Image Modal */}
-            <Modal
-                open={imageModalVisible}
-                onCancel={closeImageModal}
-                footer={null}
-                width="40vw"
-                centered
-                destroyOnClose
-            >
-                {selectedImage && (
-                    <img
-                        src={selectedImage}
-                        alt="Enlarged"
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: "8px",
-                        }}
-                    />
                 )}
             </Modal>
         </>
