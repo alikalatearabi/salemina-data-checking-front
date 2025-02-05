@@ -1,0 +1,66 @@
+.header {
+    direction: rtl;
+    background: linear-gradient(135deg, #1d3557, #457b9d);
+    color: #fff;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Vazir', sans-serif;
+    padding: 15px 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    @media (max-width: 768px) {
+        padding: 10px 20px;
+    }
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+
+    @media (max-width: 768px) {
+        font-size: 20px;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 18px;
+    }
+}
+
+.logoutButton {
+    background: linear-gradient(135deg, #e63946, #ff6b6b);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Vazir', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        background: linear-gradient(135deg, #d62828, #e63946);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}

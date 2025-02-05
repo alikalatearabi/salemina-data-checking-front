@@ -35,6 +35,8 @@ export interface Product {
   salt_ext: string;
   sodium: string;
   cholesterol: string;
+  createdAt: Date,
+  updatedAt: Date
 }
 
 

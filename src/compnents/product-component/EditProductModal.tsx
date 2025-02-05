@@ -1,9 +1,8 @@
-import React from "react";
-import { Modal, Input, Button, Tabs } from "antd";
+import React, { useState } from "react";
+import moment from "moment-jalaali";
+import { Modal, Input, Button } from "antd";
 import { Product } from "../../api/product";
 import styles from "./EditProductModal.module.scss";
-
-const { TabPane } = Tabs;
 
 interface EditProductModalProps {
     visible: boolean;
@@ -13,7 +12,6 @@ interface EditProductModalProps {
     onChange: (key: string, value: string) => void;
 }
 
-// Fields to exclude from the editable fields tab
 const excludedFields = [
     "_id",
     "Main_data_status",
@@ -22,12 +20,11 @@ const excludedFields = [
     "picture_new",
     "picture_main_info",
     "picture_extra_info",
+    "createdAt",
     "updatedAt",
-    "monitor",
-    "importer",
+    "__v",
 ];
 
-// Fields for the images tab
 const imageFields = [
     { key: "picture_old", label: "Old Picture" },
     { key: "picture_new", label: "New Picture" },
@@ -42,27 +39,41 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     onSave,
     onChange,
 }) => {
+    const [imageModalVisible, setImageModalVisible] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+    const handleImageClick = (imageUrl: string) => {
+        setSelectedImage(imageUrl);
+        setImageModalVisible(true);
+    };
+
+    const closeImageModal = () => {
+        setSelectedImage(null);
+        setImageModalVisible(false);
+    };
+
     return (
-        <Modal
-            width="90vw"
-            title="Edit Product"
-            open={visible}
-            onCancel={onCancel}
-            footer={
-                <div className={styles.modalFooter}>
-                    <Button key="cancel" onClick={onCancel}>
-                        Cancel
-                    </Button>
-                    <Button key="save" type="primary" onClick={onSave}>
-                        Save
-                    </Button>
-                </div>
-            }
-        >
-            {product && (
-                <Tabs defaultActiveKey="1">
-                    {/* Tab 1: Editable Fields */}
-                    <TabPane tab="Edit Fields" key="1">
+        <>
+            <Modal
+                width="90vw"
+                title="Edit Product"
+                open={visible}
+                onCancel={onCancel}
+                footer={
+                    <div className={styles.modalFooter}>
+                        <Button key="cancel" onClick={onCancel}>
+                            Cancel
+                        </Button>
+                        <Button key="save" type="primary" onClick={onSave}>
+                            Save
+                        </Button>
+                    </div>
+                }
+                destroyOnClose
+            >
+                {product && (
+                    <div className={styles.container}>
+                        {/* Editable Fields */}
                         <div className={styles.fieldsContainer}>
                             {Object.keys(product)
                                 .filter((key) => !excludedFields.includes(key))
@@ -75,25 +86,46 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                                         />
                                     </div>
                                 ))}
-                        </div>
-                    </TabPane>
 
-                    {/* Tab 2: Images */}
-                    <TabPane tab="Product Images" key="2">
+                            {/* Read-only Jalali Dates */}
+                            {product.createdAt && (
+                                <div className={styles.field}>
+                                    <label>تاریخ ایجاد:</label>
+                                    <Input
+                                        value={moment(product.createdAt).format("jYYYY/jMM/jDD HH:mm")}
+                                        readOnly
+                                    />
+                                </div>
+                            )}
+                            {product.updatedAt && (
+                                <div className={styles.field}>
+                                    <label>تاریخ بروزرسانی:</label>
+                                    <Input
+                                        value={moment(product.updatedAt).format("jYYYY/jMM/jDD HH:mm")}
+                                        readOnly
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Product Images */}
                         <div className={styles.imagesContainer}>
                             {imageFields.map(({ key, label }) => (
                                 <div key={key} className={styles.imageField}>
                                     <h4>{label}</h4>
                                     {product[key as keyof Product] ? (
                                         <img
-                                            src={product[key as keyof Product]}
+                                            src={typeof product[key as keyof Product] === 'string' ? product[key as keyof Product] as string : undefined}
                                             alt={label}
                                             className={styles.image}
+                                            onClick={() =>
+                                                handleImageClick(product[key as keyof Product] as string)
+                                            }
                                             onError={(e) => {
                                                 (e.target as HTMLImageElement).style.display = "none";
-                                                const parentElement = (e.target as HTMLElement).parentElement;
-                                                if (parentElement) {
-                                                    parentElement.innerHTML = "<p>No Image Available</p>";
+                                                const container = (e.target as HTMLElement).closest("div");
+                                                if (container) {
+                                                    container.innerHTML = "<p>No Image Available</p>";
                                                 }
                                             }}
                                         />
@@ -103,10 +135,32 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                                 </div>
                             ))}
                         </div>
-                    </TabPane>
-                </Tabs>
-            )}
-        </Modal>
+                    </div>
+                )}
+            </Modal>
+
+            {/* Image Modal */}
+            <Modal
+                open={imageModalVisible}
+                onCancel={closeImageModal}
+                footer={null}
+                width="40vw"
+                centered
+                destroyOnClose
+            >
+                {selectedImage && (
+                    <img
+                        src={selectedImage}
+                        alt="Enlarged"
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "8px",
+                        }}
+                    />
+                )}
+            </Modal>
+        </>
     );
 };
 

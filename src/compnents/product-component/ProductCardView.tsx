@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Pagination, notification } from "antd";
+import { Button, Card, Pagination, notification, Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Product, updateProduct } from "../../api/product";
 import { useData } from "../../store/dataContext";
 import EditProductModal from "./EditProductModal";
@@ -7,16 +8,22 @@ import styles from "./productCardViewStyle.module.scss";
 
 const { Meta } = Card;
 
-const ProductCardView = () => {
+const ProductCardView: React.FC<{ filters: Record<string, string | undefined> }> = ({ filters }) => {
     const { data, fetchData } = useData();
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(12);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+    const username = localStorage.getItem("username");
+
+    const fetchFilteredData = (page: number) => {
+        fetchData({ page: `${page}`, limit: `${productsPerPage}`, ...filters });
+    };
+
     useEffect(() => {
-        fetchData({ page: `${currentPage}`, limit: `${productsPerPage}` });
-    }, [currentPage]);
+        fetchFilteredData(currentPage);
+    }, [currentPage, filters]);
 
     const handleEdit = (product: Product) => {
         setSelectedProduct(product);
@@ -24,14 +31,15 @@ const ProductCardView = () => {
     };
 
     const handleSave = async () => {
-        try {            
+        try {
             if (selectedProduct) {
-                await updateProduct(selectedProduct);
+                const product = {...selectedProduct, "monitor": username}
+                await updateProduct(product);
                 notification.success({
                     message: "Update Successful",
                     description: "Product updated successfully.",
                 });
-                fetchData({ page: `${currentPage}`, limit: `${productsPerPage}` });
+                fetchFilteredData(currentPage);
             }
         } catch (error) {
             notification.error({
@@ -53,7 +61,7 @@ const ProductCardView = () => {
     };
 
     return (
-        <div>
+        <div style={{ width: "100%" }}>
             <div className={styles.flexContainer}>
                 {data?.data?.map((product: Product) => (
                     <Card
@@ -69,7 +77,14 @@ const ProductCardView = () => {
                                         onError={(e) => (e.currentTarget.style.display = "none")}
                                     />
                                 ) : (
-                                    <span>No Image</span>
+                                    <div style={{
+                                        height: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <p>عکس محصول موجود نیست</p>
+                                    </div>
                                 )}
                             </div>
                         }
@@ -94,12 +109,18 @@ const ProductCardView = () => {
             </div>
 
             <div className={styles.paginationContainer}>
-                <Pagination
-                    current={currentPage}
-                    total={Number(data?.totalProducts) || 0}
-                    pageSize={productsPerPage}
-                    onChange={handlePageChange}
-                />
+                <div className={styles.paginationWrapper}>
+                    <Tooltip title={`تعداد کل محصولات: ${data?.totalProducts || 0}`}>
+                        <QuestionCircleOutlined className={styles.infoIcon} />
+                    </Tooltip>
+                    <Pagination
+                        current={currentPage}
+                        total={Number(data?.totalProducts) || 0}
+                        pageSize={productsPerPage}
+                        onChange={handlePageChange}
+                        showSizeChanger={false}
+                    />
+                </div>
             </div>
 
             <EditProductModal

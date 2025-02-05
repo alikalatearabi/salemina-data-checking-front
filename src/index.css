@@ -21,6 +21,7 @@
 html {
     scrollbar-width: thin;
     scrollbar-color: #4682b4 #f1f1f1;
+    height: 100%;
 }
 
 
@@ -33,4 +34,9 @@ body {
     padding: 0;
     margin: 0;
     background-color: #e2e6ea;
+    height: 100%;
+}
+
+#root{
+    height: 100%;
 }

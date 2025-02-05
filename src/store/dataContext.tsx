@@ -37,6 +37,8 @@ export interface DataType {
         salt_ext: string;
         sodium: string;
         cholesterol: string;
+        createdAt: Date,
+        updatedAt: Date
     }[],
     totalProducts?: string
 }

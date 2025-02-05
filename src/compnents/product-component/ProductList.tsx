@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { DataType, useData } from "../store/dataContext";
 import { Button, ConfigProvider, Input, Modal, Table, Tooltip, notification } from "antd";
-import { Product, updateProduct } from "../api/product";
+import { DataType, useData } from "../../store/dataContext";
+import { Product, updateProduct } from "../../api/product";
 import ActionCell from "./ActionCell";
 
 

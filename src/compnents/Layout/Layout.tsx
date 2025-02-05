@@ -7,7 +7,7 @@ interface LayoutProps {
 
 const AppLayout: React.FC<LayoutProps> = ({ children }) => {
     return (
-        <div>
+        <div style={{width: '100%'}}>
             <Header />
             <div style={layoutStyle}>
                 <main style={mainContentStyle}>
