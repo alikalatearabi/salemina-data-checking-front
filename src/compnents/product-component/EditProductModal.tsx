@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment-jalaali";
-import { Modal, Input, Button, Select } from "antd";
-import axios from "axios"; // Import axios for API calls
+import { Modal, Input, Button, Select, Divider } from "antd";
+import axios from "axios";
 import { Product } from "../../api/product";
 import styles from "./EditProductModal.module.scss";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface EditProductModalProps {
     visible: boolean;
@@ -46,11 +48,15 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     const [childClusters, setChildClusters] = useState<string[]>([]);
     const [selectedCluster, setSelectedCluster] = useState<string | null>(null);
     const [selectedChildCluster, setSelectedChildCluster] = useState<string | null>(null);
+    const [newCluster, setNewCluster] = useState("");
 
     useEffect(() => {
         if (visible) {
+            if(product && product['cluster']){
+                setSelectedCluster(product['cluster'])
+            }
             axios
-                .get("http://localhost:3000/api/distinct-clusters")
+                .get(`${API_BASE_URL}/distinct-clusters`)
                 .then((response) => {
                     if (response.data && Array.isArray(response.data.clusters)) {
                         const filteredClusters = response.data.clusters.filter(
@@ -69,7 +75,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     useEffect(() => {
         if (selectedCluster) {
             axios
-                .get(`http://localhost:3000/api/distinct-child-clusters?cluster=${selectedCluster}`)
+                .get(`${API_BASE_URL}/distinct-child-clusters?cluster=${selectedCluster}`)
                 .then((response) => {
                     if (response.data && Array.isArray(response.data.childClusters)) {
                         setChildClusters(response.data.childClusters);
@@ -83,16 +89,36 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         }
     }, [selectedCluster]);
 
-    const handleClusterChange = (value: string) => {
-        setSelectedCluster(value);
-        setSelectedChildCluster(null);
-        onChange("cluster", value);
+    const handleClusterChange = (value: string | string[]) => {
+        const newValue = Array.isArray(value) ? value[0] : value;
+        if (newValue) {
+            if (!clusters.includes(newValue)) {
+                setClusters([...clusters, newValue]);
+            }
+            setSelectedCluster(newValue);
+            onChange("cluster", newValue);
+        } else {
+            setSelectedCluster(null);
+            setSelectedChildCluster(null);
+            onChange("cluster", "");
+            // onChange("child_cluster", "");
+        }
     };
 
-    const handleChildClusterChange = (value: string) => {
-        setSelectedChildCluster(value);
-        onChange("child_cluster", value);
+    const handleChildClusterChange = (value: string | string[]) => {
+        const newValue = Array.isArray(value) ? value[0] : value; 
+        if (newValue) {
+            if (!childClusters.includes(newValue)) {
+                setChildClusters([...childClusters, newValue]); 
+            }
+            setSelectedChildCluster(newValue);
+            onChange("child_cluster", newValue); 
+        } else {
+            setSelectedChildCluster(null);
+            onChange("child_cluster", "");
+        }
     };
+
 
     const handleImageClick = (imageUrl: string) => {
         setSelectedImage(imageUrl);
@@ -103,6 +129,16 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         setSelectedImage(null);
         setImageModalVisible(false);
     };
+
+    const handleAddCluster = () => {
+        if (newCluster.trim() && !clusters.includes(newCluster)) {
+            setClusters([...clusters, newCluster]);
+            setSelectedCluster(newCluster);
+            onChange("cluster", newCluster);
+        }
+        setNewCluster("");
+    };
+
 
     return (
         <>
@@ -133,15 +169,40 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                                         <label>{key.replace(/_/g, " ")}:</label>
                                         {key === "cluster" ? (
                                             <Select
-                                                value={selectedCluster || product[key] || undefined}
+                                                value={selectedCluster}
                                                 onChange={handleClusterChange}
+                                                mode="tags"
+                                                allowClear
                                                 style={{ width: "100%", direction: "rtl" }}
                                                 dropdownStyle={{ direction: "rtl" }}
+                                                dropdownRender={(menu) => (
+                                                    <>
+                                                        <div style={{ padding: 8 }}>
+                                                            <Input
+                                                                placeholder="دسته‌بندی جدید..."
+                                                                value={newCluster}
+                                                                onChange={(e) => setNewCluster(e.target.value)}
+                                                                onPressEnter={handleAddCluster}
+                                                            />
+                                                            <Button
+                                                                type="link"
+                                                                onClick={handleAddCluster}
+                                                                style={{
+                                                                    margin: '5px auto',
+                                                                    width: "100%",
+                                                                    backgroundColor: '#457b9d',
+                                                                    color: 'white'
+                                                                }}
+                                                            >
+                                                                افزودن
+                                                            </Button>
+                                                        </div>
+                                                        <Divider style={{ margin: "4px 0" }} />
+                                                        {menu}
+                                                    </>
+                                                )}
                                                 placeholder="یک دسته‌بندی انتخاب کنید"
                                                 showSearch
-                                                filterOption={(input, option) => {
-                                                    return option ? option.label.toLowerCase().includes(input.toLowerCase()) : false;
-                                                }}
                                                 options={clusters.map((cluster) => ({
                                                     value: cluster,
                                                     label: cluster,
@@ -149,16 +210,14 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                                             />
                                         ) : key === "child_cluster" ? (
                                             <Select
-                                                value={selectedChildCluster || product[key] || undefined}
+                                                value={selectedChildCluster}
                                                 onChange={handleChildClusterChange}
+                                                mode="tags" // Allows custom input
                                                 style={{ width: "100%", direction: "rtl" }}
                                                 dropdownStyle={{ direction: "rtl" }}
                                                 placeholder="یک زیر دسته‌بندی انتخاب کنید"
                                                 disabled={!selectedCluster} // Disable if no parent cluster is selected
                                                 showSearch
-                                                filterOption={(input, option) => {
-                                                    return option ? option.label.toLowerCase().includes(input.toLowerCase()) : false;
-                                                }}
                                                 options={childClusters.map((cluster) => ({
                                                     value: cluster,
                                                     label: cluster,
@@ -199,17 +258,10 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                                     <h4>{label}</h4>
                                     {product[key as keyof Product] ? (
                                         <img
-                                            src={typeof product[key as keyof Product] === "string" ? product[key as keyof Product] as string : undefined}
+                                            src={product[key as keyof Product] as string}
                                             alt={label}
                                             className={styles.image}
                                             onClick={() => handleImageClick(product[key as keyof Product] as string)}
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).style.display = "none";
-                                                const container = (e.target as HTMLElement).closest("div");
-                                                if (container) {
-                                                    container.innerHTML = "<p>No Image Available</p>";
-                                                }
-                                            }}
                                         />
                                     ) : (
                                         <p>No Image Available</p>
@@ -218,6 +270,28 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                             ))}
                         </div>
                     </div>
+                )}
+            </Modal>
+
+            {/* Image Modal (Now Included) */}
+            <Modal
+                open={imageModalVisible}
+                onCancel={closeImageModal}
+                footer={null}
+                width="40vw"
+                centered
+                destroyOnClose
+            >
+                {selectedImage && (
+                    <img
+                        src={selectedImage}
+                        alt="Enlarged"
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "8px",
+                        }}
+                    />
                 )}
             </Modal>
         </>

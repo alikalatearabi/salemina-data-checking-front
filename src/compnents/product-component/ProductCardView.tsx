@@ -32,9 +32,9 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined> }>
 
     const handleSave = async () => {
         try {
-            
+
             if (selectedProduct) {
-                const product = {...selectedProduct, "monitor": username}
+                const product = { ...selectedProduct, "monitor": username }
                 await updateProduct(product);
                 notification.success({
                     message: "Update Successful",
@@ -53,13 +53,21 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined> }>
 
     const handleChangeInput = (key: string, value: string) => {
         if (selectedProduct) {
-            setSelectedProduct({ ...selectedProduct, [key]: value });
+            if (key === 'cluster' && value === "") {
+                setSelectedProduct({ ...selectedProduct, [key]: value, "child_cluster": "" });
+            } else {
+                setSelectedProduct({ ...selectedProduct, [key]: value });
+            }
         }
     };
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
+
+    // useEffect(() => {
+    //     console.log(selectedProduct)
+    // }, [selectedProduct])
 
     return (
         <div style={{ width: "100%" }}>
