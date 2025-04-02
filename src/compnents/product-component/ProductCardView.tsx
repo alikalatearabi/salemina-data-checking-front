@@ -8,7 +8,7 @@ import styles from "./productCardViewStyle.module.scss";
 
 const { Meta } = Card;
 
-const ProductCardView: React.FC<{ filters: Record<string, string | undefined> }> = ({ filters }) => {
+const ProductCardView: React.FC<{ filters: Record<string, string | undefined | number> }> = ({ filters }) => {
     const { data, fetchData } = useData();
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(12);
@@ -65,10 +65,6 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined> }>
         setCurrentPage(page);
     };
 
-    // useEffect(() => {
-    //     console.log(selectedProduct)
-    // }, [selectedProduct])
-
     return (
         <div style={{ width: "100%" }}>
             <div className={styles.flexContainer}>
@@ -103,8 +99,8 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined> }>
                             description={
                                 <div className={styles.metaDescription}>
                                     <div>بارکد: {product.barcode}</div>
-                                    <div>وضعیت داده‌های اصلی: {product.Main_data_status}</div>
-                                    <div>وضعیت داده‌های اضافی: {product.Extra_data_status}</div>
+                                    <div>وضعیت داده‌های اصلی: {product.main_data_status}</div>
+                                    <div>وضعیت داده‌های اضافی: {product.extra_data_status}</div>
                                 </div>
                             }
                         />

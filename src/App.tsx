@@ -2,17 +2,17 @@ import "./App.css";
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./compnents/Layout/Layout";
-import FilterList from "./compnents/filter-component/FilterList";
 import ProductCardView from "./compnents/product-component/ProductCardView";
 import Login from "./compnents/auth/Login";
+import FilterDrawer from "./compnents/filter-component/FilterDrawer";
 
 function App() {
-    const [filters, setFilters] = useState<Record<string, string | undefined>>({});
+    const [filters, setFilters] = useState<Record<string, string | undefined | number>>({});
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
         !!localStorage.getItem("token")
     );
 
-    const handleApplyFilters = (newFilters: Record<string, string | undefined>) => {
+    const handleApplyFilters = (newFilters: Record<string, string | undefined | number>) => {
         setFilters(newFilters);
     };
 
@@ -37,7 +37,7 @@ function App() {
                         isAuthenticated ? (
                             <AppLayout>
                                 <div style={mainContentStyle}>
-                                    <FilterList onApplyFilters={handleApplyFilters} />
+                                    <FilterDrawer onApplyFilters={handleApplyFilters} />
                                     <ProductCardView filters={filters} />
                                 </div>
                             </AppLayout>

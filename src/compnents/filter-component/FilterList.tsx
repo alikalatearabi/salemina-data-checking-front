@@ -6,11 +6,11 @@ import axios from "axios";
 
 const { Option } = Select;
 
-const FilterList: React.FC<{ onApplyFilters: (filters: Record<string, string | undefined>) => void }> = ({ onApplyFilters }) => {
+const FilterList: React.FC<{ onApplyFilters: (filters: Record<string, string | number | undefined>) => void }> = ({ onApplyFilters }) => {
     const [importer, setImporter] = useState<string>("");
     const [barcode, setBarcode] = useState<string>("");
-    const [mainDataStatus, setMainDataStatus] = useState<string | undefined>(undefined);
-    const [extraDataStatus, setExtraDataStatus] = useState<string | undefined>(undefined);
+    const [mainDataStatus, setMainDataStatus] = useState<number | undefined>(undefined);
+    const [extraDataStatus, setExtraDataStatus] = useState<number | undefined>(undefined);
     const [cluster, setCluster] = useState<string | undefined>(undefined);
     const [childCluster, setChildCluster] = useState<string | undefined>(undefined);
 
@@ -21,7 +21,6 @@ const FilterList: React.FC<{ onApplyFilters: (filters: Record<string, string | u
     const [isLoadingChildClusters, setIsLoadingChildClusters] = useState<boolean>(false);
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
-    // Fetch clusters when the page loads
     useEffect(() => {
         const fetchClusters = async () => {
             setIsLoadingClusters(true);
@@ -38,7 +37,6 @@ const FilterList: React.FC<{ onApplyFilters: (filters: Record<string, string | u
         fetchClusters();
     }, []);
 
-    // Fetch child clusters when a cluster is selected
     useEffect(() => {
         if (cluster) {
             const fetchChildClusters = async () => {
@@ -68,8 +66,8 @@ const FilterList: React.FC<{ onApplyFilters: (filters: Record<string, string | u
         onApplyFilters({
             importer: importer || undefined,
             barcode: barcode || undefined,
-            Main_data_status: mainDataStatus || undefined,
-            Extra_data_status: extraDataStatus || undefined,
+            main_data_status: mainDataStatus,
+            extra_data_status: extraDataStatus,
             cluster: cluster || undefined,
             child_cluster: childCluster || undefined,
         });
@@ -115,24 +113,24 @@ const FilterList: React.FC<{ onApplyFilters: (filters: Record<string, string | u
                     <Select
                         placeholder="وضعیت داده اصلی"
                         value={mainDataStatus}
-                        onChange={(value) => setMainDataStatus(value)}
+                        onChange={(value: number) => setMainDataStatus(value)}
                         className={styles.filterSelect}
                         allowClear
                     >
-                        <Option value="2">2</Option>
-                        <Option value="3">3</Option>
-                        <Option value="7">7</Option>
-                        <Option value="11">11</Option>
+                        <Option value={2}>2</Option>
+                        <Option value={3}>3</Option>
+                        <Option value={7}>7</Option>
+                        <Option value={11}>11</Option>
                     </Select>
                     <Select
                         placeholder="وضعیت داده اضافی"
                         value={extraDataStatus}
-                        onChange={(value) => setExtraDataStatus(value)}
+                        onChange={(value: number) => setExtraDataStatus(value)}
                         className={styles.filterSelect}
                         allowClear
                     >
-                        <Option value="3">3</Option>
-                        <Option value="7">7</Option>
+                        <Option value={3}>3</Option>
+                        <Option value={7}>7</Option>
                     </Select>
                     <Select
                         placeholder="خوشه"

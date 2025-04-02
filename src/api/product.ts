@@ -2,8 +2,8 @@ import apiClient from './index';
 
 export interface Product {
   _id: string;
-  Main_data_status: string;
-  Extra_data_status: string;
+  main_data_status: string;
+  extra_data_status: string;
   cluster: string;
   child_cluster: string;
   product_name: string;
