@@ -54,7 +54,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     if (visible) {
       if (product && product["cluster"]) {
         setSelectedCluster(product["cluster"]);
-      } else {
+      } else if (product && product["cluster"] === "") {
         setSelectedCluster(null);
       }
       axios
