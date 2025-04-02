@@ -54,6 +54,8 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     if (visible) {
       if (product && product["cluster"]) {
         setSelectedCluster(product["cluster"]);
+      } else {
+        setSelectedCluster(null);
       }
       axios
         .get(`${API_BASE_URL}/distinct-clusters`)
