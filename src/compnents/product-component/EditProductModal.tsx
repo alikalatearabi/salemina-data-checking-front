@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import moment from "moment-jalaali";
-import { Modal, Input, Button, Select, Divider } from "antd";
+import { Modal, Input, Button, Select, Divider, Space, Typography, Empty, Row, Col } from "antd";
 import axios from "axios";
 import { Product } from "../../api/product";
 import styles from "./EditProductModal.module.scss";
+import { CloseOutlined, CheckCircleFilled } from "@ant-design/icons";
+
+const { Title, Text } = Typography;
+const { Option } = Select;
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -49,6 +53,8 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
   const [selectedCluster, setSelectedCluster] = useState<string | null>(null);
   const [selectedChildCluster, setSelectedChildCluster] = useState<string | null>(null);
   const [newCluster, setNewCluster] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 576);
+  const [isTablet, setIsTablet] = useState(window.innerWidth <= 992 && window.innerWidth > 576);
 
   useEffect(() => {
     if (visible) {
@@ -138,24 +144,47 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     setImageModalVisible(false);
   };
 
+  // Add window resize event listener
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 576);
+      setIsTablet(window.innerWidth <= 992 && window.innerWidth > 576);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <>
       <Modal
-        width="800px"
-        title="Edit Product"
+        width={isMobile ? "95%" : isTablet ? "90%" : "90%"}
+        title={<Title level={isMobile ? 5 : 4}>Edit Product Details</Title>}
         open={visible}
         onCancel={onCancel}
-        footer={
-          <div className={styles.modalFooter}>
-            <Button key="cancel" onClick={onCancel}>
-              Cancel
-            </Button>
-            <Button key="save" type="primary" onClick={onSave}>
-              Save
-            </Button>
-          </div>
-        }
+        footer={[
+          <div key="note" style={{ 
+            textAlign: 'left', 
+            marginRight: 'auto', 
+            color: '#52c41a', 
+            display: 'flex', 
+            alignItems: 'center',
+            fontSize: isMobile ? '12px' : '14px',
+            flexGrow: 1
+          }}>
+            <CheckCircleFilled style={{ marginRight: 8 }} /> Saving will mark this product as checked
+          </div>,
+          <Button key="cancel" onClick={onCancel} className={styles.cancelButton}>
+            Cancel
+          </Button>,
+          <Button key="save" type="primary" onClick={onSave} className={styles.saveButton}>
+            Save Changes
+          </Button>
+        ]}
         destroyOnClose
+        centered
+        bodyStyle={{ padding: isMobile ? '12px' : '20px' }}
+        style={{ top: isMobile ? 10 : 20 }}
       >
         {product && (
           <div className={styles.editProductContainer}>
@@ -173,7 +202,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                       }
                     />
                   ) : (
-                    <p>No Image Available</p>
+                    <div className={styles.noImage}>No Image Available</div>
                   )}
                 </div>
               ))}
@@ -181,91 +210,40 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
             <div className={styles.formColumn}>
               <div className={styles.fieldsContainer}>
+                <div className={styles.sectionDivider}>Basic Information</div>
+                
                 {Object.keys(product)
-                  .filter((key) => !excludedFields.includes(key))
-                  .map((key) => (
-                    <div key={key} className={styles.field}>
-                      <label>{key.replace(/_/g, " ")}:</label>
-                      {key === "cluster" ? (
-                        <Select
-                          value={selectedCluster}
-                          onChange={handleClusterChange}
-                          mode="tags"
-                          allowClear
-                          style={{ width: "100%", direction: "rtl" }}
-                          dropdownStyle={{ direction: "rtl" }}
-                          dropdownRender={(menu) => (
-                            <>
-                              <div style={{ padding: 8 }}>
-                                <Input
-                                  placeholder="دسته‌بندی جدید..."
-                                  value={newCluster}
-                                  onChange={(e) => setNewCluster(e.target.value)}
-                                  onPressEnter={handleAddCluster}
-                                />
-                                <Button
-                                  type="link"
-                                  onClick={handleAddCluster}
-                                  style={{
-                                    margin: "5px auto",
-                                    width: "100%",
-                                    backgroundColor: "#457b9d",
-                                    color: "white",
-                                  }}
-                                >
-                                  افزودن
-                                </Button>
-                              </div>
-                              <Divider style={{ margin: "4px 0" }} />
-                              {menu}
-                            </>
-                          )}
-                          placeholder="یک دسته‌بندی انتخاب کنید"
-                          showSearch
-                          options={clusters.map((cluster) => ({
-                            value: cluster,
-                            label: cluster,
-                          }))}
-                        />
-                      ) : key === "child_cluster" ? (
-                        <Select
-                          value={selectedChildCluster}
-                          onChange={handleChildClusterChange}
-                          mode="tags"
-                          style={{ width: "100%", direction: "rtl" }}
-                          dropdownStyle={{ direction: "rtl" }}
-                          placeholder="یک زیر دسته‌بندی انتخاب کنید"
-                          disabled={!selectedCluster}
-                          showSearch
-                          options={childClusters.map((child) => ({
-                            value: child,
-                            label: child,
-                          }))}
-                        />
-                      ) : (
-                        <Input
-                          value={(product as any)[key]}
-                          onChange={(e) => onChange(key, e.target.value)}
-                        />
-                      )}
-                    </div>
-                  ))}
-
+                  .filter(key => ['name', 'label', 'barcode', 'price', 'price_unit', 'color', 'weight', 'cluster', 'child_cluster'].includes(key))
+                  .map((key) => renderField(key))}
+                
+                <div className={styles.sectionDivider}>Additional Details</div>
+                
+                {Object.keys(product)
+                  .filter(key => 
+                    !excludedFields.includes(key) && 
+                    !['name', 'label', 'barcode', 'price', 'price_unit', 'color', 'weight', 'cluster', 'child_cluster', 'createdAt', 'updatedAt'].includes(key)
+                  )
+                  .map((key) => renderField(key))}
+                
+                <div className={styles.sectionDivider}>System Information</div>
+                
                 {product.createdAt && (
                   <div className={styles.field}>
-                    <label>تاریخ ایجاد:</label>
+                    <label>Creation Date</label>
                     <Input
                       value={moment(product.createdAt).format("jYYYY/jMM/jDD HH:mm")}
                       readOnly
+                      className={styles.dateField}
                     />
                   </div>
                 )}
                 {product.updatedAt && (
                   <div className={styles.field}>
-                    <label>تاریخ بروزرسانی:</label>
+                    <label>Last Updated</label>
                     <Input
                       value={moment(product.updatedAt).format("jYYYY/jMM/jDD HH:mm")}
                       readOnly
+                      className={styles.dateField}
                     />
                   </div>
                 )}
@@ -279,24 +257,123 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         open={imageModalVisible}
         onCancel={closeImageModal}
         footer={null}
-        width="40vw"
+        width={isMobile ? "95vw" : isTablet ? "80vw" : "70vw"}
         centered
         destroyOnClose
+        bodyStyle={{ padding: 0, backgroundColor: 'transparent' }}
+        style={{ top: isMobile ? 10 : 20 }}
+        maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.85)' }}
+        closeIcon={
+          <Button 
+            type="text" 
+            icon={<CloseOutlined />} 
+            style={{ 
+              color: 'white', 
+              fontSize: isMobile ? '16px' : '18px', 
+              position: 'absolute', 
+              top: 10, 
+              right: 10, 
+              zIndex: 1000,
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '50%',
+              width: isMobile ? '32px' : '36px',
+              height: isMobile ? '32px' : '36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }} 
+          />
+        }
       >
         {selectedImage && (
-          <img
-            src={selectedImage}
-            alt="Enlarged"
-            style={{
-              width: "100%",
-              height: "100%",
-              borderRadius: "8px",
-            }}
-          />
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            padding: '20px',
+            height: '80vh',
+            width: '100%'
+          }}>
+            <img
+              src={selectedImage}
+              alt="Enlarged"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+                borderRadius: "8px",
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)"
+              }}
+            />
+          </div>
         )}
       </Modal>
     </>
   );
+  
+  function renderField(key: string) {
+    return (
+      <div key={key} className={styles.field}>
+        <label>{key.replace(/_/g, " ")}</label>
+        {key === "cluster" ? (
+          <Select
+            value={selectedCluster}
+            onChange={handleClusterChange}
+            mode="tags"
+            allowClear
+            style={{ width: "100%", direction: "rtl" }}
+            dropdownStyle={{ direction: "rtl" }}
+            dropdownRender={(menu) => (
+              <>
+                <div style={{ padding: 8 }}>
+                  <Input
+                    placeholder="دسته‌بندی جدید..."
+                    value={newCluster}
+                    onChange={(e) => setNewCluster(e.target.value)}
+                    onPressEnter={handleAddCluster}
+                  />
+                  <Button
+                    onClick={handleAddCluster}
+                    className={styles.addClusterButton}
+                  >
+                    افزودن
+                  </Button>
+                </div>
+                <Divider style={{ margin: "4px 0" }} />
+                {menu}
+              </>
+            )}
+            placeholder="یک دسته‌بندی انتخاب کنید"
+            showSearch
+            options={clusters.map((cluster) => ({
+              value: cluster,
+              label: cluster,
+            }))}
+          />
+        ) : key === "child_cluster" ? (
+          <Select
+            value={selectedChildCluster}
+            onChange={handleChildClusterChange}
+            mode="tags"
+            style={{ width: "100%", direction: "rtl" }}
+            dropdownStyle={{ direction: "rtl" }}
+            placeholder="یک زیر دسته‌بندی انتخاب کنید"
+            disabled={!selectedCluster}
+            showSearch
+            options={childClusters.map((child) => ({
+              value: child,
+              label: child,
+            }))}
+          />
+        ) : (
+          <Input
+            value={(product as any)[key]}
+            onChange={(e) => onChange(key, e.target.value)}
+          />
+        )}
+      </div>
+    );
+  }
 };
 
 export default EditProductModal;

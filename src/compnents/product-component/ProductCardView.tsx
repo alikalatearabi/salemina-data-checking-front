@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Pagination, notification, Tooltip } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Button, Card, Pagination, notification, Tooltip, Badge } from "antd";
+import { QuestionCircleOutlined, CheckCircleFilled } from "@ant-design/icons";
 import { Product, updateProduct } from "../../api/product";
 import { useData } from "../../store/dataContext";
 import EditProductModal from "./EditProductModal";
@@ -32,13 +32,16 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined | n
 
     const handleSave = async () => {
         try {
-
             if (selectedProduct) {
-                const product = { ...selectedProduct, "monitor": username }
+                const product = { 
+                    ...selectedProduct, 
+                    "monitor": username,
+                    "main_data_status": 2 
+                }
                 await updateProduct(product);
                 notification.success({
                     message: "Update Successful",
-                    description: "Product updated successfully.",
+                    description: "Product updated successfully and marked as checked.",
                 });
                 fetchFilteredData(currentPage);
             }
@@ -75,6 +78,12 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined | n
                         className={styles.card}
                         cover={
                             <div className={styles.cardCover}>
+                                {Number(product.main_data_status) === 2 && (
+                                    <Badge 
+                                        count={<CheckCircleFilled style={{ color: '#52c41a' }} />}
+                                        className={styles.checkedBadge}
+                                    />
+                                )}
                                 {product.picture_old ? (
                                     <img
                                         alt={product.product_name}
@@ -95,7 +104,16 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined | n
                         }
                     >
                         <Meta
-                            title={product.product_name}
+                            title={
+                                <div className={styles.productTitle}>
+                                    {product.product_name}
+                                    {Number(product.main_data_status) === 2 && (
+                                        <span className={styles.checkedStatus}>
+                                            <CheckCircleFilled style={{ color: '#52c41a' }} /> Checked
+                                        </span>
+                                    )}
+                                </div>
+                            }
                             description={
                                 <div className={styles.metaDescription}>
                                     <div>بارکد: {product.barcode}</div>

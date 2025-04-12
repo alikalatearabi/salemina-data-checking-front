@@ -4,8 +4,8 @@ import apiClient from '../api';
 export interface DataType {
     data?: {
         _id: string;
-        main_data_status: string;
-        extra_data_status: string;
+        main_data_status: number;
+        extra_data_status: number;
         cluster: string;
         child_cluster: string;
         product_name: string;
