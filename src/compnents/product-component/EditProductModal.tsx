@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment-jalaali";
-import { Modal, Input, Button, Select, Divider, Space, Typography, Empty, Row, Col } from "antd";
+import { Modal, Input, Button, Select, Divider, Typography } from "antd";
 import axios from "axios";
 import { Product } from "../../api/product";
 import styles from "./EditProductModal.module.scss";
 import { CloseOutlined, CheckCircleFilled } from "@ant-design/icons";
 
-const { Title, Text } = Typography;
-const { Option } = Select;
+const { Title } = Typography;
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
