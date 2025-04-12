@@ -1,60 +1,117 @@
 .flexContainer {
     direction: rtl;
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
-
-    @media (max-width: 1024px) {
-        justify-content: space-around;
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    justify-content: center;
+    
+    @media (max-width: 1440px) {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     }
-
-    @media (max-width: 768px) {
-        justify-content: center;
+    
+    @media (max-width: 576px) {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+        margin-top: 20px;
     }
 }
 
 .card {
-    width: calc(25% - 20px); /* Default width for larger screens */
-    border: 1px solid #f0f0f0;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+    border: none;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    
     &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        transform: translateY(-8px);
+        box-shadow: 0 16px 30px rgba(69, 123, 157, 0.2);
+        
+        .cardButtonContainer button {
+            background: linear-gradient(135deg, #457b9d, #1d3557);
+            color: white;
+        }
+        
+        .cardCover img {
+            transform: scale(1.08);
+        }
     }
-
-    @media (max-width: 1024px) {
-        width: calc(33.33% - 20px);
-    }
-
-    @media (max-width: 768px) {
-        width: calc(50% - 20px);
-    }
-
-    @media (max-width: 480px) {
+    
+    &:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #457b9d, #a8dadc);
+        z-index: 5;
+    }
+    
+    :global(.ant-card-body) {
+        padding: 18px 16px;
+    }
+    
+    :global(.ant-card-meta-title) {
+        margin-bottom: 10px !important;
+        font-size: 17px;
+        color: #1d3557;
+        font-weight: 600;
+        white-space: normal;
+        line-height: 1.4;
+    }
+    
+    :global(.ant-card-meta-description) {
+        color: #666;
+    }
+    
+    @media (max-width: 576px) {
+        border-radius: 14px;
+        
+        :global(.ant-card-body) {
+            padding: 14px 12px;
+        }
+        
+        :global(.ant-card-meta-title) {
+            font-size: 15px;
+        }
     }
 }
 
 .cardCover {
-    height: 250px;
+    height: 220px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f9f9f9;
-    border-radius: 10px 10px 0 0;
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
     overflow: hidden;
     position: relative;
-
+    
     img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         object-position: center;
+        transition: transform 0.5s ease;
+        padding: 14px;
+    }
+    
+    &:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 30px;
+        background: linear-gradient(to top, rgba(255,255,255,0.8), transparent);
+    }
+    
+    @media (max-width: 576px) {
+        height: 180px;
     }
 }
 
@@ -66,15 +123,22 @@
 
     :global {
         .ant-badge-count {
-            background-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            width: 24px;
-            height: 24px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 18px;
+            border: 2px solid rgba(82, 196, 26, 0.2);
+            
+            @media (max-width: 576px) {
+                width: 28px;
+                height: 28px;
+                font-size: 16px;
+            }
         }
     }
 }
@@ -84,76 +148,139 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    flex-wrap: wrap;
+    gap: 6px;
 }
 
 .checkedStatus {
     font-size: 12px;
     background-color: rgba(82, 196, 26, 0.1);
     color: #52c41a;
-    padding: 2px 8px;
-    border-radius: 12px;
+    padding: 3px 10px;
+    border-radius: 30px;
     display: flex;
     align-items: center;
     gap: 4px;
     font-weight: 500;
+    box-shadow: 0 2px 5px rgba(82, 196, 26, 0.15);
 }
 
 .metaDescription {
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 14px;
-    color: #555;
-
+    color: #444;
+    
     div {
         margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        
+        &:before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #457b9d;
+            opacity: 0.7;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        font-size: 13px;
+        margin-top: 10px;
+        
+        div {
+            margin-bottom: 6px;
+        }
     }
 }
 
 .cardButtonContainer {
-    margin-top: 20px;
+    margin-top: 18px;
     display: flex;
     justify-content: center;
 
     button {
-        background: linear-gradient(135deg, #4682b4, #5a9bd3);
-        border: none;
-        border-radius: 8px;
-        color: white;
+        background: white;
+        border: 2px solid #457b9d;
+        border-radius: 30px;
+        color: #457b9d;
         font-size: 14px;
+        font-weight: 600;
         padding: 10px 20px;
         width: 100%;
         transition: all 0.3s ease;
-
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 42px;
+        
         &:hover {
-            background: linear-gradient(135deg, #356a8e, #4682b4);
+            background: linear-gradient(135deg, #457b9d, #1d3557);
+            color: white;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(69, 123, 157, 0.25);
         }
-
+        
         &:active {
             transform: translateY(0);
         }
+        
+        @media (max-width: 576px) {
+            font-size: 13px;
+            padding: 8px 16px;
+            height: 38px;
+        }
+    }
+}
+
+.noImageContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    background-color: #f5f5f5;
+    
+    svg {
+        font-size: 40px;
+        margin-bottom: 12px;
+        opacity: 0.4;
+    }
+    
+    p {
+        font-style: italic;
+        font-size: 14px;
     }
 }
 
 .paginationContainer {
     display: flex;
     justify-content: center;
-    margin-top: 30px;
-    padding-bottom: 20px;
+    margin-top: 40px;
+    padding-bottom: 32px;
 
     .paginationWrapper {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        background-color: white;
+        padding: 12px 20px;
+        border-radius: 50px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .infoIcon {
-        font-size: 18px;
-        color: #4682b4;
+        font-size: 20px;
+        color: #457b9d;
         cursor: pointer;
         transition: color 0.3s ease;
 
         &:hover {
-            color: #356a8e;
+            color: #1d3557;
         }
     }
 
@@ -164,19 +291,28 @@
             transition: all 0.3s ease;
 
             &:hover {
-                border-color: #4682b4;
-                color: #4682b4;
+                border-color: #457b9d;
+                color: #457b9d;
             }
         }
 
         .ant-pagination-item-active {
-            border-color: #4682b4;
-            background-color: #4682b4;
+            border-color: #457b9d;
+            background-color: #457b9d;
             color: white;
 
             &:hover {
-                background-color: #356a8e;
+                background-color: #1d3557;
             }
+        }
+    }
+    
+    @media (max-width: 576px) {
+        margin-top: 30px;
+        padding-bottom: 20px;
+        
+        .paginationWrapper {
+            padding: 10px 16px;
         }
     }
 }

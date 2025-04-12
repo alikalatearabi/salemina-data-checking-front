@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Pagination, notification, Tooltip, Badge } from "antd";
-import { QuestionCircleOutlined, CheckCircleFilled } from "@ant-design/icons";
+import { QuestionCircleOutlined, CheckCircleFilled, FileImageOutlined, EditOutlined } from "@ant-design/icons";
 import { Product, updateProduct } from "../../api/product";
 import { useData } from "../../store/dataContext";
 import EditProductModal from "./EditProductModal";
@@ -91,12 +91,8 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined | n
                                         onError={(e) => (e.currentTarget.style.display = "none")}
                                     />
                                 ) : (
-                                    <div style={{
-                                        height: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
+                                    <div className={styles.noImageContainer}>
+                                        <FileImageOutlined />
                                         <p>عکس محصول موجود نیست</p>
                                     </div>
                                 )}
@@ -123,7 +119,7 @@ const ProductCardView: React.FC<{ filters: Record<string, string | undefined | n
                             }
                         />
                         <div className={styles.cardButtonContainer}>
-                            <Button type="primary" onClick={() => handleEdit(product)}>
+                            <Button type="primary" onClick={() => handleEdit(product)} icon={<EditOutlined />}>
                                 مشاهده یا ویرایش
                             </Button>
                         </div>
