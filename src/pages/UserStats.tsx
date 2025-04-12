@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Card, Table, Tabs, Typography, Spin, Alert, Tag, Badge, Tooltip, Empty, ConfigProvider, AutoComplete } from 'antd';
-import { SearchOutlined, BarChartOutlined, CheckCircleOutlined, ClockCircleOutlined, FileTextOutlined, CalendarOutlined, UserOutlined } from '@ant-design/icons';
+import {BarChartOutlined, CheckCircleOutlined, ClockCircleOutlined, FileTextOutlined, CalendarOutlined, UserOutlined } from '@ant-design/icons';
 import { fetchUserProductStats, UserProductStats, StatusGroup, DailyCount, fetchImporters } from '../api/userStats';
 import moment from 'moment-jalaali';
 import { ColumnsType } from 'antd/es/table';
@@ -197,7 +197,7 @@ const UserStats: React.FC = () => {
       title: 'تعداد',
       dataIndex: 'count',
       key: 'count',
-      render: (count: number, record: DailyCount) => {
+      render: (count: number) => {
         // Calculate intensity for heatmap effect (0-100%)
         // Assuming max count could be around 100, adjust as needed
         const maxCount = 50; // Adjust based on expected max value

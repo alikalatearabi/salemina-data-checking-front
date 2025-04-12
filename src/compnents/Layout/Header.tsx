@@ -7,7 +7,7 @@ const AppHeader: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [_, setWindowWidth] = useState(window.innerWidth);
 
     // Track window resize for responsive behavior
     useEffect(() => {
