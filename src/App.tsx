@@ -5,6 +5,7 @@ import AppLayout from "./compnents/Layout/Layout";
 import ProductCardView from "./compnents/product-component/ProductCardView";
 import Login from "./compnents/auth/Login";
 import FilterDrawer from "./compnents/filter-component/FilterDrawer";
+import UserStats from "./pages/UserStats";
 
 function App() {
     const [filters, setFilters] = useState<Record<string, string | undefined | number>>({});
@@ -39,6 +40,20 @@ function App() {
                                 <div style={mainContentStyle}>
                                     <FilterDrawer onApplyFilters={handleApplyFilters} />
                                     <ProductCardView filters={filters} />
+                                </div>
+                            </AppLayout>
+                        ) : (
+                            <Navigate to="/login" replace />
+                        )
+                    }
+                />
+                <Route
+                    path="/user-stats"
+                    element={
+                        isAuthenticated ? (
+                            <AppLayout>
+                                <div style={mainContentStyle}>
+                                    <UserStats />
                                 </div>
                             </AppLayout>
                         ) : (

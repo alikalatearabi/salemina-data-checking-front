@@ -1,66 +1,194 @@
 .header {
-    direction: rtl;
-    background: linear-gradient(135deg, #1d3557, #457b9d);
-    color: #fff;
-    text-align: center;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: space-between;
-    font-family: 'Vazir', sans-serif;
-    padding: 15px 30px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #457b9d, #1d3557);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    direction: rtl;
+    position: relative;
     z-index: 1000;
+    font-family: 'Vazir';
+}
 
-    @media (max-width: 768px) {
-        padding: 10px 20px;
-    }
+.headerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
 }
 
 .title {
-    font-size: 24px;
-    font-weight: 600;
     margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
-    @media (max-width: 768px) {
-        font-size: 20px;
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+
+.navLink {
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    position: relative;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
     }
+}
 
-    @media (max-width: 480px) {
-        font-size: 18px;
+.activeLink {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 4px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 16px;
+        height: 3px;
+        background-color: white;
+        border-radius: 2px;
     }
 }
 
 .logoutButton {
-    background: linear-gradient(135deg, #e63946, #ff6b6b);
-    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
     border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
+    padding: 8px 16px;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 16px;
-    font-family: 'Vazir', sans-serif;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
     &:hover {
-        background: linear-gradient(135deg, #d62828, #e63946);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    &:active {
-        transform: translateY(0);
+        background-color: rgba(255, 255, 255, 0.3);
     }
 
     &:focus {
         outline: none;
-        box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.3);
     }
+}
 
-    @media (max-width: 768px) {
-        padding: 8px 16px;
-        font-size: 14px;
+.mobileMenuButton {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 8px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+}
+
+.menuBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .headerContent {
+        padding: 12px 16px;
+    }
+    
+    .title {
+        font-size: 18px;
+        max-width: 70%;
+    }
+    
+    .mobileMenuButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .navLinks {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        flex-direction: column;
+        background: linear-gradient(135deg, #457b9d, #1d3557);
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        padding: 0;
+        z-index: 100;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .mobileMenuOpen {
+        max-height: 300px;
+        opacity: 1;
+        transform: translateY(0);
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .navLink {
+        width: 100%;
+        border-radius: 8px;
+        padding: 12px 16px;
+        justify-content: center;
+    }
+    
+    .activeLink::after {
+        bottom: 6px;
+    }
+    
+    .logoutButton {
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+        padding: 12px 16px;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+    .title {
+        font-size: 16px;
+        max-width: 60%;
     }
 }

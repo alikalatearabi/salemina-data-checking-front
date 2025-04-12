@@ -1,0 +1,254 @@
+.statsContainer {
+  font-family: 'Vazir';
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: #f9fafb;
+  min-height: 80vh;
+  direction: rtl;
+  text-align: right;
+  width: 96%;
+  margin: 0 auto; 
+  
+  // RTL fix for autocomplete dropdown
+  :global(.ant-select-dropdown) {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  :global(.ant-select-item) {
+    direction: rtl;
+    text-align: right;
+  }
+}
+
+.searchContainer {
+  font-family: 'Vazir';
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
+  
+  // Style for the autocomplete component
+  :global(.ant-select-selector) {
+    border-radius: 8px !important;
+    height: 42px !important;
+    padding: 0 11px !important;
+    display: flex;
+    align-items: center;
+  }
+  
+  :global(.ant-select-selection-search) {
+    inset-inline-start: 11px !important;
+    inset-inline-end: auto !important;
+  }
+}
+
+.statsHeader {
+  font-family: 'Vazir';
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.statCards {
+  font-family: 'Vazir';
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.statsLayout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tabContainer {
+  background: white;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.styledCard {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  height: 100%;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(69, 123, 157, 0.15);
+  }
+  
+  :global(.ant-card-head) {
+    background-color: #457b9d;
+    color: white;
+    border-bottom: none;
+  }
+
+  :global(.ant-card-body) {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 58px); /* Adjust for card header */
+  }
+}
+
+.dailyCounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 200px;
+  padding-right: 4px;
+  margin-top: 8px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+.dailyCountTag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  margin: 0;
+  flex-direction: row-reverse;
+}
+
+.statusGroupTable {
+  :global(.ant-table) {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    direction: rtl;
+  }
+  
+  :global(.ant-table-thead > tr > th) {
+    background-color: #f0f7fa;
+    color: #457b9d;
+    font-weight: 600;
+    text-align: right;
+  }
+  
+  :global(.ant-table-tbody > tr > td) {
+    text-align: right;
+  }
+  
+  :global(.ant-table-tbody > tr:hover > td) {
+    background-color: #f0f7fa;
+  }
+  
+  :global(.ant-table-row:nth-child(even)) {
+    background-color: #f9fafb;
+  }
+}
+
+.dailyCountTable {
+  :global(.ant-table) {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    direction: rtl;
+  }
+  
+  :global(.ant-table-thead > tr > th) {
+    background-color: #f0f7fa;
+    color: #457b9d;
+    font-weight: 600;
+    text-align: right;
+  }
+  
+  :global(.ant-table-tbody > tr > td) {
+    text-align: right;
+  }
+  
+  :global(.ant-table-tbody > tr:hover > td) {
+    background-color: #f0f7fa;
+  }
+  
+  :global(.ant-table-row:nth-child(even)) {
+    background-color: #f9fafb;
+  }
+}
+
+.statusCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-direction: row-reverse;
+}
+
+.rtlTooltip {
+  :global(.ant-tooltip-arrow) {
+    transform: scaleX(-1);
+  }
+}
+
+.dailyStats {
+  margin-bottom: 16px;
+}
+
+.dailyStatsChart {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+.chartBar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 28px;
+}
+
+.chartLabel {
+  font-size: 10px;
+  color: #666;
+  transform: rotate(-45deg);
+  transform-origin: top left;
+  white-space: nowrap;
+  position: relative;
+  top: 8px;
+  left: 4px;
+} 
