@@ -344,6 +344,10 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
             )}
             placeholder="یک دسته‌بندی انتخاب کنید"
             showSearch
+            filterOption={(input, option) => 
+              (option?.label as string).toLowerCase().includes(input.toLowerCase())
+            }
+            optionFilterProp="label"
             options={clusters.map((cluster) => ({
               value: cluster,
               label: cluster,
@@ -359,6 +363,10 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
             placeholder="یک زیر دسته‌بندی انتخاب کنید"
             disabled={!selectedCluster}
             showSearch
+            filterOption={(input, option) => 
+              (option?.label as string).toLowerCase().includes(input.toLowerCase())
+            }
+            optionFilterProp="label"
             options={childClusters.map((child) => ({
               value: child,
               label: child,
